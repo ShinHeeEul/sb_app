@@ -7,12 +7,9 @@
     tools:context=".MainActivity">
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="257dp"
-        android:layout_height="287dp"
-        android:layout_marginStart="148dp"
-        android:layout_marginTop="272dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/btn_plus" />
+        android:id="@+id/subway"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/resource__" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
