@@ -10,8 +10,8 @@
         android:id="@+id/imageView"
         android:layout_width="257dp"
         android:layout_height="287dp"
-        android:layout_marginStart="51dp"
-        android:layout_marginTop="203dp"
+        android:layout_marginStart="148dp"
+        android:layout_marginTop="272dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/btn_plus" />
