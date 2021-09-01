@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void start() {
         FrameLayout myButton_picture = (FrameLayout) findViewById(R.id.gildong_jpg);
-        Button myButton = (Button) findViewById(R.id.gildong_button);
         TextView myView = (TextView) findViewById(R.id.info_context);
 
         myButton_picture.setOnClickListener(new View.OnClickListener() {
@@ -28,12 +27,6 @@ public class MainActivity extends AppCompatActivity {
                 myView.setText("프레임워크 클릭했습니다");
             }
         });
-        myButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                myView.setText("버튼을 클릭했습니다");
-            }
-        });
-
 
 
     }
