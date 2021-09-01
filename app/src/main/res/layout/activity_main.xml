@@ -19,16 +19,19 @@
                 android:id="@+id/subway"
                 android:layout_width="360dp"
                 android:layout_height="202dp"
-                app:srcCompat="@drawable/_001__5_"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="151dp" />
+                android:layout_marginBottom="123dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/_001__5_" />
 
             <FrameLayout
                 android:id="@+id/gildong_jpg"
                 android:layout_width="3dp"
                 android:layout_height="3dp"
-                tools:layout_editor_absoluteX="283dp"
-                tools:layout_editor_absoluteY="263dp" >
+                android:layout_marginEnd="74dp"
+                android:layout_marginBottom="87dp"
+                app:layout_constraintBottom_toBottomOf="@+id/subway"
+                app:layout_constraintEnd_toEndOf="@+id/subway">
 
                 <Button
                     android:id="@+id/gildong_button"
