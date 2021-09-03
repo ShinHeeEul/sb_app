@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 station st = new station("길동");
                 myView.setText("길동역 station id : " + stn_info.get("길동"));
-                st.run();
+                st.start();
                 TextView test = (TextView) findViewById(R.id.test);
                 test.setText(st.getStation_name());
             }
@@ -91,9 +91,12 @@ public class MainActivity extends AppCompatActivity {
                 urlconnection = (HttpURLConnection) url.openConnection();
 
                 urlconnection.setRequestMethod("GET");
+                Log.d("Test","12");
                 BufferedReader br = new BufferedReader(new InputStreamReader(urlconnection.getInputStream(),"UTF-8"));
-                String result = "hi";
+                Log.d("Test","13");
+                String result = "";
                 String line;
+                Log.d("Test","14");
                 while((line = br.readLine()) != null) {
                     result = result + line + "\n";
                 }
@@ -105,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.e("Test", e.toString());
             }
         }
 
