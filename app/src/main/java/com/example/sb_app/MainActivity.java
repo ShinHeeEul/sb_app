@@ -87,13 +87,13 @@ public class MainActivity extends AppCompatActivity {
 
                 urlconnection.setRequestMethod("GET");
                 BufferedReader br = new BufferedReader(new InputStreamReader(urlconnection.getInputStream(),"UTF-8"));
-                String result = "";
+                String result = "hi";
                 String line;
                 while((line = br.readLine()) != null) {
                     result = result + line + "\n";
                 }
 
-                 station_name = result;
+                 Log.d("Test",result);
 
             } catch (Exception e) {
                 e.printStackTrace();
