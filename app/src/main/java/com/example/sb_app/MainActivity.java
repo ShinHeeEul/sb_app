@@ -93,7 +93,10 @@ public class MainActivity extends AppCompatActivity {
                     result = result + line + "\n";
                 }
 
-                 Log.d("Test",result);
+                Log.d("Test",result);
+                Log.d("Test","1");
+                Log.e("Test","23");
+                station_name = result;
 
             } catch (Exception e) {
                 e.printStackTrace();
