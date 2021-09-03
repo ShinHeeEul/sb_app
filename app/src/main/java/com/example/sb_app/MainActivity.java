@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                 station st = new station("길동");
                 myView.setText("길동역 station id : " + stn_info.get("길동"));
                 TextView test = (TextView) findViewById(R.id.test);
-                test.setText(st.getSt_url());
+                test.setText(st.getStation_name());
             }
         });
 
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     result = result + line + "\n";
                 }
 
-                Log.i("Test", result);
+                 station_name = result;
 
             } catch (Exception e) {
                 e.printStackTrace();
