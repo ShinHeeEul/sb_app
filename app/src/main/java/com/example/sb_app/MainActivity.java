@@ -84,11 +84,15 @@ public class MainActivity extends AppCompatActivity {
                 URL url = new URL(st_url);
                 HttpURLConnection urlconnection = null;
                 urlconnection = (HttpURLConnection) url.openConnection();
+                Log.d("Test","station0");
 
                 urlconnection.setRequestMethod("GET");
-                BufferedReader br = new BufferedReader(new InputStreamReader(urlconnection.getInputStream(),"UTF-8"));
+                Log.d("Test","station1");
+                BufferedReader br = new BufferedReader(new InputStreamReader(urlconnection.getInputStream(),"utf-8"));
+                Log.d("Test","station2");
                 String result = "hi";
                 String line;
+                Log.d("Test","station3");
                 while((line = br.readLine()) != null) {
                     result = result + line + "\n";
                 }
@@ -100,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.e("Test", e.toString() );
             }
         }
 
