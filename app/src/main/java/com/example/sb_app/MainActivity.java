@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 station st = new station("길동");
                 myView.setText("길동역 station id : " + stn_info.get("길동"));
+                st.run();
                 TextView test = (TextView) findViewById(R.id.test);
                 test.setText(st.getStation_name());
             }
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public class station {
+    public class station extends Thread{
         //변수////////////////////////
         //url
         private String st_url = "http://swopenapi.seoul.go.kr/api/subway/746b524f59746c7337327742727956/xml/realtimeStationArrival/0/10/";
@@ -80,19 +81,19 @@ public class MainActivity extends AppCompatActivity {
 
         public station(String name) {
             st_url = st_url + name;
+        }
+
+        public void run() {
+
             try {
                 URL url = new URL(st_url);
                 HttpURLConnection urlconnection = null;
                 urlconnection = (HttpURLConnection) url.openConnection();
-                Log.d("Test","station0");
 
                 urlconnection.setRequestMethod("GET");
-                Log.d("Test","station1");
-                BufferedReader br = new BufferedReader(new InputStreamReader(urlconnection.getInputStream(),"utf-8"));
-                Log.d("Test","station2");
+                BufferedReader br = new BufferedReader(new InputStreamReader(urlconnection.getInputStream(),"UTF-8"));
                 String result = "hi";
                 String line;
-                Log.d("Test","station3");
                 while((line = br.readLine()) != null) {
                     result = result + line + "\n";
                 }
@@ -104,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
 
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.e("Test", e.toString() );
             }
         }
 
