@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        station_info();
+        //station_info();
         main();
     }
     //main 함수 부분 시작!
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         String raw_info = null;
         try {
             //파일 경로
-            file = new FileInputStream("./subway_station.txt");
+            file = new FileInputStream("C:\\Users\\rlagy\\Documents\\GitHub\\sb_app\\app\\src\\main\\java\\com\\example\\sb_app\\subway_station.txt");
 
             data = new byte[file.available()];
             file.read(data);
@@ -191,12 +191,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        Log.i("hibugs", raw_info);
         //역정보 split해서 HashMap에 추가
         String[] stn = raw_info.split("\n");
-        for(int i = 0; i < stn.length; i++) {
+        for(int i = 0; i < stn.length-1; i++) {
             String[] tmp = stn[i].split("\t");
             stn_info.put(tmp[2], Integer.parseInt(tmp[1]));
         }
+
 
     }
 }
