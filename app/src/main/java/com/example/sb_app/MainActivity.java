@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ScaleGestureDetector mScaleGestureDetector;
     private float mScaleFactor = 1.0f;
+    private float mScalex = 1.0f;
+    private float mScaley = 1.0f;
     private ImageView mImageView;
 
 
@@ -49,45 +51,9 @@ public class MainActivity extends AppCompatActivity {
         // xml에 정의한 이미지뷰 찾고
         mImageView=(ImageView)findViewById(R.id.subway);
 
-        // 스케일제스쳐 디텍터 인스턴스
-        mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
+
     }
 
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        //변수로 선언해 놓은 ScaleGestureDetector
-       /* switch(event.getActionMasked()) {
-            case MotionEvent.ACTION_BUTTON_PRESS:
-
-        }*/
-        mScaleGestureDetector.onTouchEvent(event);
-        return true;
-    }
-
-    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-        @Override
-        public boolean onScale(ScaleGestureDetector scaleGestureDetector){
-            // ScaleGestureDetector에서 factor를 받아 변수로 선언한 factor에 넣고
-            mScaleFactor *= scaleGestureDetector.getScaleFactor();
-
-            // 최대 10배, 최소 10배 줌 한계 설정
-            mScaleFactor = Math.max(1.0f,
-                    Math.min(mScaleFactor, 10.0f));
-
-            // 이미지뷰 스케일에 적용
-            mImageView.setPivotX(scaleGestureDetector.getFocusX());
-            mImageView.setPivotY(scaleGestureDetector.getFocusY() - 255);
-            mImageView.setScaleX(mScaleFactor);
-            mImageView.setScaleY(mScaleFactor);
-
-
-            FrameLayout myButton_picture = (FrameLayout) findViewById(R.id.gildong_jpg);
-            myButton_picture.setScaleX(mScaleFactor);
-            myButton_picture.setScaleY(mScaleFactor);
-            return true;
-        }
-    }
 
     //main 함수 부분 시작!
     private void main() {
