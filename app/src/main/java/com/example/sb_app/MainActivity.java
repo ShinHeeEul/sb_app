@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
     }
 
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         //변수로 선언해 놓은 ScaleGestureDetector
@@ -71,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
                     Math.min(mScaleFactor, 10.0f));
 
             // 이미지뷰 스케일에 적용
+            mImageView.setPivotX(scaleGestureDetector.getCurrentSpanX());
+            mImageView.setPivotY(scaleGestureDetector.getCurrentSpanY() + 255);
             mImageView.setScaleX(mScaleFactor);
             mImageView.setScaleY(mScaleFactor);
 

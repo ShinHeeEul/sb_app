@@ -23,4 +23,5 @@
 
     <uses-permission android:name="android.permission.INTERNET" /> <!--인터넷 접속권한부여-->
 
+
 </manifest>
