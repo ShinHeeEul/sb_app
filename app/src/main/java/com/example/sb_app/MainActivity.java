@@ -1,27 +1,32 @@
 package com.example.sb_app;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import org.w3c.dom.Document;
+
+
+import javax.xml.parsers.*;
+
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.Buffer;
 import java.util.HashMap;
+
 public class MainActivity extends AppCompatActivity {
 
     private ScaleGestureDetector mScaleGestureDetector;
@@ -68,6 +73,11 @@ public class MainActivity extends AppCompatActivity {
             // 이미지뷰 스케일에 적용
             mImageView.setScaleX(mScaleFactor);
             mImageView.setScaleY(mScaleFactor);
+
+
+            FrameLayout myButton_picture = (FrameLayout) findViewById(R.id.gildong_jpg);
+            myButton_picture.setScaleX(mScaleFactor);
+            myButton_picture.setScaleY(mScaleFactor);
             return true;
         }
     }
@@ -115,14 +125,22 @@ public class MainActivity extends AppCompatActivity {
         //역 정보 가져옴
         public station() {
             //st_url = st_url + "/강동";
-           this("강동");
+            this("강동");
         }
 
         public station(String name) {
+            station_name = name;
             st_url = st_url + name;
         }
 
         public void run() {
+
+            //DocumentBuilderFactory 생성
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            DocumentBuilder builder;
+            Document doc = null;
+
 
             try {
                 URL url = new URL(st_url);
@@ -130,24 +148,25 @@ public class MainActivity extends AppCompatActivity {
                 urlconnection = (HttpURLConnection) url.openConnection();
 
                 urlconnection.setRequestMethod("GET");
-                Log.d("Test","12");
+                //Log.d("Test","12");
                 BufferedReader br = new BufferedReader(new InputStreamReader(urlconnection.getInputStream(),"UTF-8"));
-                Log.d("Test","13");
+                // Log.d("Test","13");
                 String result = "";
                 String line;
-                Log.d("Test","14");
+                // Log.d("Test","14");
                 while((line = br.readLine()) != null) {
                     result = result + line + "\n";
                 }
 
-                Log.d("Test",result);
-                Log.d("Test","1");
-                Log.e("Test","23");
-                station_name = result;
+                //Log.i("test","1");
+                for(int i = 0; i < 10; i++) {
+                    arrive_time[0] = (result.split("<recptnDt>")[1]);
+                }
+
 
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.e("Test", e.toString());
+                //Log.e("Test", e.toString());
             }
         }
 
@@ -242,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        Log.i("hibugs", raw_info);
+       // Log.i("hibugs", raw_info);
         //역정보 split해서 HashMap에 추가
         String[] stn = raw_info.split("\n");
         for(int i = 0; i < stn.length-1; i++) {
