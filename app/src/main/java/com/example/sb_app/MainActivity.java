@@ -57,6 +57,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         //변수로 선언해 놓은 ScaleGestureDetector
+       /* switch(event.getActionMasked()) {
+            case MotionEvent.ACTION_BUTTON_PRESS:
+
+        }*/
         mScaleGestureDetector.onTouchEvent(event);
         return true;
     }
@@ -68,12 +72,12 @@ public class MainActivity extends AppCompatActivity {
             mScaleFactor *= scaleGestureDetector.getScaleFactor();
 
             // 최대 10배, 최소 10배 줌 한계 설정
-            mScaleFactor = Math.max(0.1f,
+            mScaleFactor = Math.max(1.0f,
                     Math.min(mScaleFactor, 10.0f));
 
             // 이미지뷰 스케일에 적용
-            mImageView.setPivotX(scaleGestureDetector.getCurrentSpanX());
-            mImageView.setPivotY(scaleGestureDetector.getCurrentSpanY() + 255);
+            mImageView.setPivotX(scaleGestureDetector.getFocusX());
+            mImageView.setPivotY(scaleGestureDetector.getFocusY() - 255);
             mImageView.setScaleX(mScaleFactor);
             mImageView.setScaleY(mScaleFactor);
 
