@@ -12,20 +12,13 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <com.ortiz.touchview.TouchImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></com.ortiz.touchview.TouchImageView>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="476dp">
-
-            <ImageView
-                android:id="@+id/subway"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
-                app:srcCompat="@drawable/_001__5_" />
 
             <FrameLayout
                 android:id="@+id/gildong_jpg"
