@@ -1,13 +1,17 @@
 package com.example.sb_app;
 
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -48,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
     private float mScalex = 1.0f;
     private float mScaley = 1.0f;
     private ImageView mImageView;
+    LinearLayout upline;
+    LinearLayout dnline;
+
 
     //전역 변수//////////////
     //역정보가 담겨있는 map<역이름, 역id>
@@ -56,8 +63,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+
+
+        upline = findViewById(R.id.upLine);
+        dnline = findViewById(R.id.dnLine);
+
         station_info();
 
         main();
@@ -89,17 +100,30 @@ public class MainActivity extends AppCompatActivity {
     private void main() {
         FrameLayout myButton_picture = (FrameLayout) findViewById(R.id.gildong_jpg);
         TextView myView = (TextView) findViewById(R.id.info_context);
-        station st = new station("길동");
-        myView.setText("길동역 station id : " + stn_info.get("길동"));
-        st.start();
 
         myButton_picture.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //station st = new station("길동");
-                //myView.setText("길동역 station id : " + stn_info.get("길동"));
-                //st.start();
-                TextView test = (TextView) findViewById(R.id.test);
-                test.setText(st.getStation_name());
+                station st = new station("길동");
+                myView.setText(st.getStation_name());
+
+                st.start();
+                //upline.removeAllViews();
+
+                TextView textview = new TextView(getApplicationContext());
+                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+//              textview.setText(getArrive_time());
+                textview.setText("hello");
+
+                textview.setLayoutParams(param);
+                textview.setId(0);
+                textview.setTextSize(12);
+                textview.setTypeface(null, Typeface.BOLD);
+
+
+                textview.setBackgroundColor(Color.rgb(100,100,100));
+                upline.addView(textview);
+                //dnLine.addView(textview);
             }
         });
 
@@ -114,14 +138,22 @@ public class MainActivity extends AppCompatActivity {
 
         //역이름 - subwayId
         private String station_name;
-        //도착 예정 시간 - recptnDt
-        private String[] arrive_time;
+        //도착 예정 시간 - arvMsg2
+        private String arrive_time;
         //역id - statnId
         private int station_id;
         //즐겨찾기
         private int favorite;
         //호선 정보 - subwayList
         private int[] line_id;
+        //상행하행 - updnLine
+        private String updnLine;
+        //종착역 - trainLineNm
+        private String endPoint;
+
+
+
+
 
         ////////////////////////////
 
@@ -145,14 +177,16 @@ public class MainActivity extends AppCompatActivity {
             //factory.setNamespaceAware(true);
             //----------------------------------------------------
             //https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=nonamed0000&logNo=220988048654 여기 참고함
-            Log.d("doc", "run: ");
+           // Log.d("doc", "run: ");
+
+
+
             try{
                 // parsing할 url 지정(API 키 포함해서)
-                String url = "http://swopenapi.seoul.go.kr/api/subway/746b524f59746c7337327742727956/xml/realtimeStationArrival/0/10/길동";
                 DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
                 DocumentBuilder dBuilder = dbFactoty.newDocumentBuilder();
                 Log.d("doc", "run:0 ");
-                Document doc = dBuilder.parse(url);
+                Document doc = dBuilder.parse(st_url);
                 Log.d("doc", "run:1 ");
                 // root tag
                 doc.getDocumentElement().normalize();
@@ -160,7 +194,8 @@ public class MainActivity extends AppCompatActivity {
 
                 // 파싱할 tag
                 NodeList nList = doc.getElementsByTagName("row");
-                //System.out.println("파싱할 리스트 수 : "+ nList.getLength());
+
+
 
                 for(int temp = 0; temp < nList.getLength(); temp++){
 
@@ -168,11 +203,53 @@ public class MainActivity extends AppCompatActivity {
                     if(nNode.getNodeType() == Node.ELEMENT_NODE){
 
                         Element eElement = (Element) nNode;
-                        //System.out.println("######################");
-                        Log.d("yesss", "######################");
+                        /*Log.d("yesss", "######################");
                         Log.d("yesss", "역이름: " + getTagValue("statnNm", eElement));
-                        //System.out.println(eElement.getTextContent());
-                        //System.out.println("금융사  : " + getTagValue("kor_co_nm", eElement));
+                        Log.d("yesss", "도착 예정 시간 : " + getTagValue("arvlMsg2",eElement));
+                        Log.d("yesss", "역 id : " + getTagValue("statnId",eElement));
+                        Log.d("yesss", "호선 정보 : " + getTagValue("subwayList",eElement));
+                        Log.d("yesss", "updnLine : "  + getTagValue("updnLine",eElement));
+                        Log.d("yesss", "종착역 : "  + getTagValue("trainLineNm",eElement));
+*/
+
+                        //변수 설정
+                        /*
+                        setStation_name(getTagValue("statnNm", eElement));
+                        setArrive_time(getTagValue("arvlMsg2",eElement));
+                        setStation_id(Integer.parseInt(getTagValue("statnId",eElement)));
+                        setUpdnLine(getTagValue("updnLine",eElement));
+                        setEndPoint(getTagValue("trainLineNm",eElement));
+*/
+                       // upLine.removeAllViews();
+                       // dnLine.removeAllViews();
+
+
+//                        textview.setText(getArrive_time());
+/*                        textview.setText("hello");
+
+                        textview.setLayoutParams(param);
+                        textview.setId(0);
+                        textview.setTextSize(12);
+                        textview.setTypeface(null, Typeface.BOLD);
+
+
+                        textview.setBackgroundColor(Color.rgb(100,100,100));
+                        upline.addView(textview);
+                        dnline.addView(textview);
+
+                        switch(updnLine) {
+                            case "상행" :
+                                Log.d("yesss", "1");
+                                upline.addView(textview);
+
+                                Log.d("yesss", "2");
+                                break;
+                            case "하행" :
+                                dnline.addView(textview);
+                                break;
+                            default :
+
+                        }*/
                     }	// for end
 
                 }	// if end
@@ -197,10 +274,6 @@ public class MainActivity extends AppCompatActivity {
                     result = result + line + "\n";
                 }
 
-                //Log.i("test","1");
-                for (int i = 0; i < 10; i++) {
-                    arrive_time[0] = (result.split("<recptnDt>")[1]);
-                }
 
 
             } catch (Exception e) {
@@ -230,11 +303,11 @@ public class MainActivity extends AppCompatActivity {
             this.station_name = station_name;
         }
 
-        public String[] getArrive_time() {
+        public String getArrive_time() {
             return arrive_time;
         }
 
-        public void setArrive_time(String[] arrive_time) {
+        public void setArrive_time(String arrive_time) {
             this.arrive_time = arrive_time;
         }
 
@@ -260,6 +333,22 @@ public class MainActivity extends AppCompatActivity {
 
         public void setLine_id(int[] line_id) {
             this.line_id = line_id;
+        }
+
+        public String getUpdnLine() {
+            return updnLine;
+        }
+
+        public void setUpdnLine(String updnLine) {
+            this.updnLine = updnLine;
+        }
+
+        public String getEndPoint() {
+            return endPoint;
+        }
+
+        public void setEndPoint(String endPoint) {
+            this.endPoint = endPoint;
         }
         //////////////////////////////////
     }

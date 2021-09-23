@@ -4,9 +4,11 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/rlagy/Documents/GitHub/sb_app/app/src/main/res/layout/activity_main.xml" value="0.25364583333333335" />
-        <entry key="..\:/Users/shesh/Desktop/sb_app/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/shesh/Desktop/sb_app/app/src/main/res/layout/activity_main.xml" value="0.5" />
         <entry key="..\:/Users/shesh/Desktop/sb_app/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.22083333333333333" />
         <entry key="..\:/Users/shesh/Desktop/sb_app/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.22083333333333333" />
+        <entry key="..\:/Users/shesh/Desktop/sb_app/app/src/main/res/xml-keysexposed/searchable.xml" value="0.1" />
+        <entry key="..\:/Users/shesh/Desktop/sb_app/app/src/main/res/xml-mcc123/search_main.xml" value="0.24583333333333332" />
       </map>
     </option>
   </component>
