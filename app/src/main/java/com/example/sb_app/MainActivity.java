@@ -31,6 +31,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+//-------------------------------------------------
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+//-------------------------------------------------
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,18 +74,30 @@ public class MainActivity extends AppCompatActivity {
         TouchImageView mImageView = (TouchImageView) findViewById(R.id.subway);
 
     }
+    //----------------------------------------------------- 파싱할때 필요
+    private static String getTagValue(String tag, Element eElement) {
+        NodeList nlList = eElement.getElementsByTagName(tag).item(0).getChildNodes();
+        Node nValue = (Node) nlList.item(0);
+        if(nValue == null)
+            return null;
+        return nValue.getNodeValue();
+    }
+    //-----------------------------------------------------
 
 
     //main 함수 부분 시작!
     private void main() {
         FrameLayout myButton_picture = (FrameLayout) findViewById(R.id.gildong_jpg);
         TextView myView = (TextView) findViewById(R.id.info_context);
+        station st = new station("길동");
+        myView.setText("길동역 station id : " + stn_info.get("길동"));
+        st.start();
 
         myButton_picture.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                station st = new station("길동");
-                myView.setText("길동역 station id : " + stn_info.get("길동"));
-                st.start();
+                //station st = new station("길동");
+                //myView.setText("길동역 station id : " + stn_info.get("길동"));
+                //st.start();
                 TextView test = (TextView) findViewById(R.id.test);
                 test.setText(st.getStation_name());
             }
@@ -120,11 +141,45 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
 
             //DocumentBuilderFactory 생성
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            DocumentBuilder builder;
-            Document doc = null;
+            //DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            //factory.setNamespaceAware(true);
+            //----------------------------------------------------
+            //https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=nonamed0000&logNo=220988048654 여기 참고함
+            Log.d("doc", "run: ");
+            try{
+                // parsing할 url 지정(API 키 포함해서)
+                String url = "http://swopenapi.seoul.go.kr/api/subway/746b524f59746c7337327742727956/xml/realtimeStationArrival/0/10/길동";
+                DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
+                DocumentBuilder dBuilder = dbFactoty.newDocumentBuilder();
+                Log.d("doc", "run:0 ");
+                Document doc = dBuilder.parse(url);
+                Log.d("doc", "run:1 ");
+                // root tag
+                doc.getDocumentElement().normalize();
+                Log.d("root_element","Root element :" + doc.getDocumentElement().getNodeName());
 
+                // 파싱할 tag
+                NodeList nList = doc.getElementsByTagName("row");
+                //System.out.println("파싱할 리스트 수 : "+ nList.getLength());
+
+                for(int temp = 0; temp < nList.getLength(); temp++){
+
+                    Node nNode = nList.item(temp);
+                    if(nNode.getNodeType() == Node.ELEMENT_NODE){
+
+                        Element eElement = (Element) nNode;
+                        //System.out.println("######################");
+                        Log.d("yesss", "######################");
+                        Log.d("yesss", "역이름: " + getTagValue("statnNm", eElement));
+                        //System.out.println(eElement.getTextContent());
+                        //System.out.println("금융사  : " + getTagValue("kor_co_nm", eElement));
+                    }	// for end
+
+                }	// if end
+            } catch (Exception e){
+                e.printStackTrace();
+            }	// try~catch end
+            //-------------------------------------------------
 
             try {
                 URL url = new URL(st_url);
