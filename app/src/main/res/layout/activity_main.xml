@@ -22,14 +22,6 @@
             android:layout_width="match_parent"
             android:layout_height="476dp">
 
-            <com.ortiz.touchview.TouchImageView
-                android:id="@+id/subway"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/_001__5_"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <FrameLayout
                 android:id="@+id/gildong_jpg"
                 android:layout_width="3dp"
@@ -39,7 +31,17 @@
                 android:background="#FF0101"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+            </FrameLayout>
+
+            <com.ortiz.touchview.TouchImageView
+                android:id="@+id/subway"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/_001__5_"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="0dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,6 +1,7 @@
 package com.example.sb_app;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ortiz.touchview.TouchImageView;
+
 import org.w3c.dom.Document;
 
 
@@ -18,8 +21,10 @@ import javax.xml.parsers.*;
 
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
@@ -35,22 +40,25 @@ public class MainActivity extends AppCompatActivity {
     private float mScaley = 1.0f;
     private ImageView mImageView;
 
-
     //전역 변수//////////////
     //역정보가 담겨있는 map<역이름, 역id>
-    HashMap<String,Integer> stn_info = new HashMap<>();
+    HashMap<String, Integer> stn_info = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        //station_info();
+        station_info();
         main();
+        for(String key : stn_info.keySet()) {
+            Log.d("Test", String.format("키 : %s, 값 : %s",key,stn_info.get(key)));
+        }
+
+        stn_info.clear();
 
         // xml에 정의한 이미지뷰 찾고
-        mImageView=(ImageView)findViewById(R.id.subway);
-
+        TouchImageView mImageView = (TouchImageView) findViewById(R.id.subway);
 
     }
 
@@ -71,10 +79,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
     }
 
-    public class station extends Thread{
+    public class station extends Thread {
         //변수////////////////////////
         //url
         private String st_url = "http://swopenapi.seoul.go.kr/api/subway/746b524f59746c7337327742727956/xml/realtimeStationArrival/0/10/";
@@ -122,17 +129,17 @@ public class MainActivity extends AppCompatActivity {
 
                 urlconnection.setRequestMethod("GET");
                 //Log.d("Test","12");
-                BufferedReader br = new BufferedReader(new InputStreamReader(urlconnection.getInputStream(),"UTF-8"));
+                BufferedReader br = new BufferedReader(new InputStreamReader(urlconnection.getInputStream(), "UTF-8"));
                 // Log.d("Test","13");
                 String result = "";
                 String line;
                 // Log.d("Test","14");
-                while((line = br.readLine()) != null) {
+                while ((line = br.readLine()) != null) {
                     result = result + line + "\n";
                 }
 
                 //Log.i("test","1");
-                for(int i = 0; i < 10; i++) {
+                for (int i = 0; i < 10; i++) {
                     arrive_time[0] = (result.split("<recptnDt>")[1]);
                 }
 
@@ -199,18 +206,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+
+
     public void station_info()  {
         //fileinputstream으로 txt 정보 읽어옴
-        FileInputStream file = null;
-        byte[] data = null;
+        InputStream file = getResources().openRawResource(R.raw.subway_station);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        String data = null;
         String raw_info = null;
         try {
             //파일 경로
-            file = new FileInputStream("C:\\Users\\rlagy\\Documents\\GitHub\\sb_app\\app\\src\\main\\java\\com\\example\\sb_app\\subway_station.txt");
-
-            data = new byte[file.available()];
-            file.read(data);
-
+           // Log.d("Test", "1");
+            int i = file.read();
+            while(i != -1) {
+                byteArrayOutputStream.write(i);
+                i = file.read();
+            }
+            data = new String(byteArrayOutputStream.toByteArray(), "utf-8");
+           // Log.d("Test",data);
             int rowindex = 0;
 
         } catch (Exception e) {
@@ -225,22 +239,15 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-
-        if(data != null) {
-            try {
-                raw_info = new String (data, "utf-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        }
-
        // Log.i("hibugs", raw_info);
         //역정보 split해서 HashMap에 추가
-        String[] stn = raw_info.split("\n");
+        String[] stn = data.split("\n");
         for(int i = 0; i < stn.length-1; i++) {
             String[] tmp = stn[i].split("\t");
             stn_info.put(tmp[2], Integer.parseInt(tmp[1]));
+           // Log.d("Test",tmp[2]);
         }
+
 
 
     }
