@@ -3,12 +3,17 @@ package com.example.sb_app;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class activity_searching extends AppCompatActivity {
@@ -18,6 +23,9 @@ public class activity_searching extends AppCompatActivity {
     private EditText editSearch;        // 검색어를 입력할 Input 창
     private SearchAdapter adapter;      // 리스트뷰에 연결할 아답터
     private ArrayList<String> arraylist;
+
+    //역정보가 담겨있는 map<역이름, 역id>
+    HashMap<String, Integer> stn_info = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +71,9 @@ public class activity_searching extends AppCompatActivity {
         });
 
 
+        //프로그램 종료시 map 비움
+        stn_info.clear();
+
     }
 
     // 검색을 수행하는 메소드
@@ -97,30 +108,48 @@ public class activity_searching extends AppCompatActivity {
     private void settingList(){
         list.add("채수빈");
         list.add("박지현");
-        list.add("수지");
-        list.add("남태현");
-        list.add("하성운");
-        list.add("크리스탈");
-        list.add("강승윤");
-        list.add("손나은");
-        list.add("남주혁");
-        list.add("루이");
-        list.add("진영");
-        list.add("슬기");
-        list.add("이해인");
-        list.add("고원희");
-        list.add("설리");
-        list.add("공명");
-        list.add("김예림");
-        list.add("혜리");
-        list.add("웬디");
-        list.add("박혜수");
-        list.add("카이");
-        list.add("진세연");
-        list.add("동호");
-        list.add("박세완");
-        list.add("도희");
-        list.add("창모");
-        list.add("허영지");
+        //map에 제대로 역정보가 담겼는지 확인 - map<역이름, 역id>
+        for (String key : stn_info.keySet()) {
+            list.add(key);
+        }
+    }
+
+    //역정보 가져오기 - 파일 위치는 res/raw
+    public void station_info() {
+        //fileinputstream으로 txt 정보 읽어옴
+        InputStream file = getResources().openRawResource(R.raw.subway_station);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        String data = null;
+        try {
+            //파일 읽기
+            int i = file.read();
+            while (i != -1) {
+                byteArrayOutputStream.write(i);
+                i = file.read();
+            }
+            //읽어온 파일 String으로 바꾸기
+            data = new String(byteArrayOutputStream.toByteArray(), "utf-8");
+            int rowindex = 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (file != null) {
+                try {
+                    file.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        //역정보 split해서 HashMap에 추가
+        String[] stn = data.split("\n");
+        for (int i = 0; i < stn.length - 1; i++) {
+            String[] tmp = stn[i].split("\t");
+            stn_info.put(tmp[2], Integer.parseInt(tmp[1]));
+        }
+
+
     }
 }
