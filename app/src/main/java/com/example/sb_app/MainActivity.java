@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button search_btn = (Button)findViewById(R.id.searching_btn);
+        ImageButton search_btn = (ImageButton)findViewById(R.id.searching_btn);
 
         search_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,10 +69,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         main();
-
-
-
-
 
         // xml에 정의한 이미지뷰 찾고
         TouchImageView mImageView = (TouchImageView) findViewById(R.id.subway);
