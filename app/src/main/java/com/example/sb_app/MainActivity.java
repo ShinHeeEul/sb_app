@@ -49,13 +49,9 @@ import org.w3c.dom.NodeList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ScaleGestureDetector mScaleGestureDetector;
-    private float mScaleFactor = 1.0f;
-    private float mScalex = 1.0f;
-    private float mScaley = 1.0f;
+
     private ImageView mImageView;
-    LinearLayout upline;
-    LinearLayout dnline;
+
 
 
     //전역 변수//////////////
@@ -68,11 +64,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        upline = findViewById(R.id.upLine);
-        dnline = findViewById(R.id.dnLine);
-
         station_info();
-
         main();
 
 
@@ -119,43 +111,63 @@ public class MainActivity extends AppCompatActivity {
                 //스레드 종료될때까지 대기 - 스레드 안에 화면 표시 코드(이하 코드들)를 추가하니 작동이 되지 않음
                 while (st.getState() != Thread.State.TERMINATED){} ;
 
+                //station 정보 출력
+                station_info_output(st);
 
-                //정보를 보여주기 전에 화면 정리
-                upline.removeAllViews();
-                dnline.removeAllViews();
-
-                //도착 시간 배열의 갯수 만큼 화면에 출력해주기
-                for(int i = 0; i < st.getArrive_time().length; i++) {
-                    //TextView를 만들어 LinearLayout의 LayoutParam 속성을 추가해주고 해당 레이아웃에 추가함
-                    TextView textview = new TextView(getApplicationContext());
-                    LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                    textview.setText(st.getArrive_time()[i]);
-                    //textview.setText("hello");
-                    Log.d("yesss", "dfdfdfdfdd종착역 : " + st.getArrive_time()[i]);
-
-                    textview.setLayoutParams(param);
-                    textview.setId(i);
-                    textview.setTextSize(12);
-                    textview.setTypeface(null, Typeface.BOLD);
-                    textview.setBackgroundColor(Color.rgb(100, 100, 100));
-                    switch(st.getUpdnLine()[i]) {
-                        case "상행" :
-                            upline.addView(textview);
-                            break;
-                        case "하행" :
-                            dnline.addView(textview);
-                            break;
-                    }
-                }
-                //dnLine.addView(textview);
-            }
-        });
 
 
     }
 
-    public class station extends Thread {
+    private void station_info_output(station st) {
+        LinearLayout upline;
+        LinearLayout dnline;
+
+
+        upline = findViewById(R.id.upLine);
+        dnline = findViewById(R.id.dnLine);
+
+        //정보를 보여주기 전에 화면 정리
+        upline.removeAllViews();
+        dnline.removeAllViews();
+
+        try {
+            //도착 시간 배열의 갯수 만큼 화면에 출력해주기
+            for (int i = 0; i < st.getArrive_time().length; i++) {
+                //TextView를 만들어 LinearLayout의 LayoutParam 속성을 추가해주고 해당 레이아웃에 추가함
+                TextView textview = new TextView(getApplicationContext());
+                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                //textview에 도착예정시간을 추가해줌
+                textview.setText(st.getArrive_time()[i]);
+
+                //textview에 속성추가를 해줌
+                textview.setLayoutParams(param);
+                textview.setId(i);
+                textview.setTextSize(12);
+                textview.setTypeface(null, Typeface.BOLD);
+                textview.setBackgroundColor(Color.rgb(100, 100, 100));
+
+                //상행인지 하행인지 판단하여 출력해줌
+                switch (st.getUpdnLine()[i]) {
+                    case "상행":
+                        upline.addView(textview);
+                        break;
+                    case "하행":
+                        dnline.addView(textview);
+                        break;
+                }
+            }
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+            //st.run();
+        }
+    }
+        });
+    }
+
+
+    private class station extends Thread {
         //변수////////////////////////
         //url
         private String st_url = "http://swopenapi.seoul.go.kr/api/subway/746b524f59746c7337327742727956/xml/realtimeStationArrival/0/10/";
@@ -220,9 +232,11 @@ public class MainActivity extends AppCompatActivity {
                 arrive_time = new String[nList.getLength()];
                 updnLine = new String[nList.getLength()];
 
+                //파싱한 데이터를 읽어옴
                 for (int temp = 0; temp < nList.getLength(); temp++) {
-                    //Log.d("yesss","hello" + Integer.toString(temp));
+
                     Node nNode = nList.item(temp);
+
                     if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 
                         Element eElement = (Element) nNode;
@@ -235,11 +249,9 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("yesss", "종착역 : " + getTagValue("trainLineNm", eElement));
 
 
-                        //변수 설정
-
+                        //변수 대입
                         setStation_name(getTagValue("statnNm", eElement));
                         setArrive_time(getTagValue("arvlMsg2", eElement), temp);
-
                         setStation_id(Integer.parseInt(getTagValue("statnId", eElement)));
                         setUpdnLine(getTagValue("updnLine", eElement), temp);
                         setEndPoint(getTagValue("trainLineNm", eElement));
