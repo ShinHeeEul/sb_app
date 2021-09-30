@@ -34,7 +34,9 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 //-------------------------------------------------
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -73,10 +75,12 @@ public class MainActivity extends AppCompatActivity {
 
         main();
 
+
         //map에 제대로 역정보가 담겼는지 확인 - map<역이름, 역id>
-        for(String key : stn_info.keySet()) {
-            Log.d("Test", String.format("키 : %s, 값 : %s",key,stn_info.get(key)));
+        for (String key : stn_info.keySet()) {
+            Log.d("Test", String.format("키 : %s, 값 : %s", key, stn_info.get(key)));
         }
+
 
         //프로그램 종료시 map 비움
         stn_info.clear();
@@ -85,11 +89,12 @@ public class MainActivity extends AppCompatActivity {
         TouchImageView mImageView = (TouchImageView) findViewById(R.id.subway);
 
     }
+
     //----------------------------------------------------- 파싱할때 필요
     private static String getTagValue(String tag, Element eElement) {
         NodeList nlList = eElement.getElementsByTagName(tag).item(0).getChildNodes();
         Node nValue = (Node) nlList.item(0);
-        if(nValue == null)
+        if (nValue == null)
             return null;
         return nValue.getNodeValue();
     }
@@ -103,26 +108,46 @@ public class MainActivity extends AppCompatActivity {
 
         myButton_picture.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                //클릭시 역 설정
                 station st = new station("길동");
+                //그 역 출력
                 myView.setText(st.getStation_name());
 
+                //스레드 시작 - api로부터 정보를 읽어옴
                 st.start();
-                //upline.removeAllViews();
 
-                TextView textview = new TextView(getApplicationContext());
-                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-//              textview.setText(getArrive_time());
-                textview.setText("hello");
-
-                textview.setLayoutParams(param);
-                textview.setId(0);
-                textview.setTextSize(12);
-                textview.setTypeface(null, Typeface.BOLD);
+                //스레드 종료될때까지 대기 - 스레드 안에 화면 표시 코드(이하 코드들)를 추가하니 작동이 되지 않음
+                while (st.getState() != Thread.State.TERMINATED){} ;
 
 
-                textview.setBackgroundColor(Color.rgb(100,100,100));
-                upline.addView(textview);
+                //정보를 보여주기 전에 화면 정리
+                upline.removeAllViews();
+                dnline.removeAllViews();
+
+                //도착 시간 배열의 갯수 만큼 화면에 출력해주기
+                for(int i = 0; i < st.getArrive_time().length; i++) {
+                    //TextView를 만들어 LinearLayout의 LayoutParam 속성을 추가해주고 해당 레이아웃에 추가함
+                    TextView textview = new TextView(getApplicationContext());
+                    LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                    textview.setText(st.getArrive_time()[i]);
+                    //textview.setText("hello");
+                    Log.d("yesss", "dfdfdfdfdd종착역 : " + st.getArrive_time()[i]);
+
+                    textview.setLayoutParams(param);
+                    textview.setId(i);
+                    textview.setTextSize(12);
+                    textview.setTypeface(null, Typeface.BOLD);
+                    textview.setBackgroundColor(Color.rgb(100, 100, 100));
+                    switch(st.getUpdnLine()[i]) {
+                        case "상행" :
+                            upline.addView(textview);
+                            break;
+                        case "하행" :
+                            dnline.addView(textview);
+                            break;
+                    }
+                }
                 //dnLine.addView(textview);
             }
         });
@@ -139,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
         //역이름 - subwayId
         private String station_name;
         //도착 예정 시간 - arvMsg2
-        private String arrive_time;
+        private String[] arrive_time = null;
         //역id - statnId
         private int station_id;
         //즐겨찾기
@@ -147,12 +172,9 @@ public class MainActivity extends AppCompatActivity {
         //호선 정보 - subwayList
         private int[] line_id;
         //상행하행 - updnLine
-        private String updnLine;
+        private String[] updnLine = null;
         //종착역 - trainLineNm
         private String endPoint;
-
-
-
 
 
         ////////////////////////////
@@ -177,11 +199,10 @@ public class MainActivity extends AppCompatActivity {
             //factory.setNamespaceAware(true);
             //----------------------------------------------------
             //https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=nonamed0000&logNo=220988048654 여기 참고함
-           // Log.d("doc", "run: ");
+            // Log.d("doc", "run: ");
 
 
-
-            try{
+            try {
                 // parsing할 url 지정(API 키 포함해서)
                 DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
                 DocumentBuilder dBuilder = dbFactoty.newDocumentBuilder();
@@ -190,96 +211,48 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("doc", "run:1 ");
                 // root tag
                 doc.getDocumentElement().normalize();
-                Log.d("root_element","Root element :" + doc.getDocumentElement().getNodeName());
+                Log.d("root_element", "Root element :" + doc.getDocumentElement().getNodeName());
 
                 // 파싱할 tag
                 NodeList nList = doc.getElementsByTagName("row");
 
+                //배열에 동적할당
+                arrive_time = new String[nList.getLength()];
+                updnLine = new String[nList.getLength()];
 
-
-                for(int temp = 0; temp < nList.getLength(); temp++){
-
+                for (int temp = 0; temp < nList.getLength(); temp++) {
+                    //Log.d("yesss","hello" + Integer.toString(temp));
                     Node nNode = nList.item(temp);
-                    if(nNode.getNodeType() == Node.ELEMENT_NODE){
+                    if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 
                         Element eElement = (Element) nNode;
-                        /*Log.d("yesss", "######################");
+                        Log.d("yesss", "######################");
                         Log.d("yesss", "역이름: " + getTagValue("statnNm", eElement));
-                        Log.d("yesss", "도착 예정 시간 : " + getTagValue("arvlMsg2",eElement));
-                        Log.d("yesss", "역 id : " + getTagValue("statnId",eElement));
-                        Log.d("yesss", "호선 정보 : " + getTagValue("subwayList",eElement));
-                        Log.d("yesss", "updnLine : "  + getTagValue("updnLine",eElement));
-                        Log.d("yesss", "종착역 : "  + getTagValue("trainLineNm",eElement));
-*/
+                        Log.d("yesss", "도착 예정 시간 : " + getTagValue("arvlMsg2", eElement));
+                        Log.d("yesss", "역 id : " + getTagValue("statnId", eElement));
+                        Log.d("yesss", "호선 정보 : " + getTagValue("subwayList", eElement));
+                        Log.d("yesss", "updnLine : " + getTagValue("updnLine", eElement));
+                        Log.d("yesss", "종착역 : " + getTagValue("trainLineNm", eElement));
+
 
                         //변수 설정
-                        /*
+
                         setStation_name(getTagValue("statnNm", eElement));
-                        setArrive_time(getTagValue("arvlMsg2",eElement));
-                        setStation_id(Integer.parseInt(getTagValue("statnId",eElement)));
-                        setUpdnLine(getTagValue("updnLine",eElement));
-                        setEndPoint(getTagValue("trainLineNm",eElement));
-*/
-                       // upLine.removeAllViews();
-                       // dnLine.removeAllViews();
+                        setArrive_time(getTagValue("arvlMsg2", eElement), temp);
+
+                        setStation_id(Integer.parseInt(getTagValue("statnId", eElement)));
+                        setUpdnLine(getTagValue("updnLine", eElement), temp);
+                        setEndPoint(getTagValue("trainLineNm", eElement));
 
 
-//                        textview.setText(getArrive_time());
-/*                        textview.setText("hello");
+                    }    // for end
 
-                        textview.setLayoutParams(param);
-                        textview.setId(0);
-                        textview.setTextSize(12);
-                        textview.setTypeface(null, Typeface.BOLD);
-
-
-                        textview.setBackgroundColor(Color.rgb(100,100,100));
-                        upline.addView(textview);
-                        dnline.addView(textview);
-
-                        switch(updnLine) {
-                            case "상행" :
-                                Log.d("yesss", "1");
-                                upline.addView(textview);
-
-                                Log.d("yesss", "2");
-                                break;
-                            case "하행" :
-                                dnline.addView(textview);
-                                break;
-                            default :
-
-                        }*/
-                    }	// for end
-
-                }	// if end
-            } catch (Exception e){
-                e.printStackTrace();
-            }	// try~catch end
-            //-------------------------------------------------
-
-            try {
-                URL url = new URL(st_url);
-                HttpURLConnection urlconnection = null;
-                urlconnection = (HttpURLConnection) url.openConnection();
-
-                urlconnection.setRequestMethod("GET");
-                //Log.d("Test","12");
-                BufferedReader br = new BufferedReader(new InputStreamReader(urlconnection.getInputStream(), "UTF-8"));
-                // Log.d("Test","13");
-                String result = "";
-                String line;
-                // Log.d("Test","14");
-                while ((line = br.readLine()) != null) {
-                    result = result + line + "\n";
-                }
-
-
-
+                }    // if end
             } catch (Exception e) {
                 e.printStackTrace();
-                //Log.e("Test", e.toString());
-            }
+            }    // try~catch end
+            //-------------------------------------------------
+
         }
 
         /////////////////////////////
@@ -303,12 +276,13 @@ public class MainActivity extends AppCompatActivity {
             this.station_name = station_name;
         }
 
-        public String getArrive_time() {
+        public String[] getArrive_time() {
             return arrive_time;
         }
 
-        public void setArrive_time(String arrive_time) {
-            this.arrive_time = arrive_time;
+        public void setArrive_time(String arrive_time, int i) {
+            this.arrive_time[i] = arrive_time;
+            Log.d("hello", this.arrive_time[i]);
         }
 
         public int getStation_id() {
@@ -335,12 +309,12 @@ public class MainActivity extends AppCompatActivity {
             this.line_id = line_id;
         }
 
-        public String getUpdnLine() {
+        public String[] getUpdnLine() {
             return updnLine;
         }
 
-        public void setUpdnLine(String updnLine) {
-            this.updnLine = updnLine;
+        public void setUpdnLine(String updnLine, int i) {
+            this.updnLine[i] = updnLine;
         }
 
         public String getEndPoint() {
@@ -354,10 +328,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
     //역정보 가져오기 - 파일 위치는 res/raw
-    public void station_info()  {
+    public void station_info() {
         //fileinputstream으로 txt 정보 읽어옴
         InputStream file = getResources().openRawResource(R.raw.subway_station);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -365,7 +337,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             //파일 읽기
             int i = file.read();
-            while(i != -1) {
+            while (i != -1) {
                 byteArrayOutputStream.write(i);
                 i = file.read();
             }
@@ -376,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if(file != null) {
+            if (file != null) {
                 try {
                     file.close();
                 } catch (IOException e) {
@@ -387,11 +359,10 @@ public class MainActivity extends AppCompatActivity {
 
         //역정보 split해서 HashMap에 추가
         String[] stn = data.split("\n");
-        for(int i = 0; i < stn.length-1; i++) {
+        for (int i = 0; i < stn.length - 1; i++) {
             String[] tmp = stn[i].split("\t");
             stn_info.put(tmp[2], Integer.parseInt(tmp[1]));
         }
-
 
 
     }
