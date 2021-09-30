@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,16 +51,7 @@ import org.w3c.dom.NodeList;
 //-------------------------------------------------
 
 public class MainActivity extends AppCompatActivity {
-
-
-    private ImageView mImageView;
-
-
-
     //전역 변수//////////////
-    //역정보가 담겨있는 map<역이름, 역id>
-    HashMap<String, Integer> stn_info = new HashMap<>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,27 +62,21 @@ public class MainActivity extends AppCompatActivity {
         search_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, activity_searching.class);
+                Intent intent = new Intent(getApplicationContext(), activity_searching.class);
                 startActivity(intent);
             }
         });
 
-
-        station_info();
         main();
 
 
-        //map에 제대로 역정보가 담겼는지 확인 - map<역이름, 역id>
-        for (String key : stn_info.keySet()) {
-            Log.d("Test", String.format("키 : %s, 값 : %s", key, stn_info.get(key)));
-        }
 
 
-        //프로그램 종료시 map 비움
-        stn_info.clear();
 
         // xml에 정의한 이미지뷰 찾고
         TouchImageView mImageView = (TouchImageView) findViewById(R.id.subway);
+
+
 
     }
 
@@ -349,45 +335,5 @@ public class MainActivity extends AppCompatActivity {
             this.endPoint = endPoint;
         }
         //////////////////////////////////
-    }
-
-
-    //역정보 가져오기 - 파일 위치는 res/raw
-    public void station_info() {
-        //fileinputstream으로 txt 정보 읽어옴
-        InputStream file = getResources().openRawResource(R.raw.subway_station);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        String data = null;
-        try {
-            //파일 읽기
-            int i = file.read();
-            while (i != -1) {
-                byteArrayOutputStream.write(i);
-                i = file.read();
-            }
-            //읽어온 파일 String으로 바꾸기
-            data = new String(byteArrayOutputStream.toByteArray(), "utf-8");
-            int rowindex = 0;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (file != null) {
-                try {
-                    file.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        //역정보 split해서 HashMap에 추가
-        String[] stn = data.split("\n");
-        for (int i = 0; i < stn.length - 1; i++) {
-            String[] tmp = stn[i].split("\t");
-            stn_info.put(tmp[2], Integer.parseInt(tmp[1]));
-        }
-
-
     }
 }

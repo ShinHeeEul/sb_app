@@ -18,14 +18,12 @@ import java.util.List;
 
 public class activity_searching extends AppCompatActivity {
 
-    private List<String> list;          // 데이터를 넣은 리스트변수
+    private ArrayList<String> list;          // 데이터를 넣은 리스트변수
     private ListView listView;          // 검색을 보여줄 리스트변수
     private EditText editSearch;        // 검색어를 입력할 Input 창
     private SearchAdapter adapter;      // 리스트뷰에 연결할 아답터
     private ArrayList<String> arraylist;
 
-    //역정보가 담겨있는 map<역이름, 역id>
-    HashMap<String, Integer> stn_info = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +38,7 @@ public class activity_searching extends AppCompatActivity {
         station_info();
 
         // 검색에 사용할 데이터을 미리 저장한다.
-        settingList();
+        //ettingList();
 
         // 리스트의 모든 데이터를 arraylist에 복사한다.// list 복사본을 만든다.
         arraylist = new ArrayList<String>();
@@ -73,8 +71,6 @@ public class activity_searching extends AppCompatActivity {
         });
 
 
-        //프로그램 종료시 map 비움
-        stn_info.clear();
 
     }
 
@@ -106,15 +102,12 @@ public class activity_searching extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-    // 검색에 사용될 데이터를 리스트에 추가한다.
+    /*// 검색에 사용될 데이터를 리스트에 추가한다.
     private void settingList(){
         list.add("채수빈");
         list.add("박지현");
         //map에 제대로 역정보가 담겼는지 확인 - map<역이름, 역id>
-        for (String key : stn_info.keySet()) {
-            list.add(key);
-        }
-    }
+    }*/
 
     //역정보 가져오기 - 파일 위치는 res/raw
     public void station_info() {
@@ -149,7 +142,7 @@ public class activity_searching extends AppCompatActivity {
         String[] stn = data.split("\n");
         for (int i = 0; i < stn.length - 1; i++) {
             String[] tmp = stn[i].split("\t");
-            stn_info.put(tmp[2], Integer.parseInt(tmp[1]));
+            list.add(tmp[2]);
         }
 
 
