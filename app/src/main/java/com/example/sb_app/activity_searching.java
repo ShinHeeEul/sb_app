@@ -37,6 +37,8 @@ public class activity_searching extends AppCompatActivity {
         // 리스트를 생성한다.
         list = new ArrayList<String>();
 
+        station_info();
+
         // 검색에 사용할 데이터을 미리 저장한다.
         settingList();
 
