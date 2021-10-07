@@ -1,9 +1,14 @@
 package com.example.sb_app;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Debug;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -71,9 +76,25 @@ public class activity_searching extends AppCompatActivity {
             }
         });
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d("clicked", "onItemClick: " + list.get(i)
+                                            + " int i = " + i
+                                            + "long l = " + l);
+
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("stationName", list.get(i));
+
+                startActivity(intent);
+
+            }
+        });
 
 
     }
+
+
 
     // 검색을 수행하는 메소드
     public void search(String charText) {

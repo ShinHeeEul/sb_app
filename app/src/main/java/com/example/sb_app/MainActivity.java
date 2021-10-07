@@ -87,32 +87,6 @@ public class MainActivity extends AppCompatActivity {
     }
     //-----------------------------------------------------
 
-
-    //main 함수 부분 시작!
-    private void main() {
-        FrameLayout myButton_picture = (FrameLayout) findViewById(R.id.gildong_jpg);
-        TextView myView = (TextView) findViewById(R.id.info_context);
-
-        myButton_picture.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //클릭시 역 설정
-                station st = new station("길동");
-                //그 역 출력
-                myView.setText(st.getStation_name());
-
-                //스레드 시작 - api로부터 정보를 읽어옴
-                st.start();
-
-                //스레드 종료될때까지 대기 - 스레드 안에 화면 표시 코드(이하 코드들)를 추가하니 작동이 되지 않음
-                while (st.getState() != Thread.State.TERMINATED){} ;
-
-                //station 정보 출력
-                station_info_output(st);
-
-
-
-    }
-
     private void station_info_output(station st) {
         LinearLayout upline;
         LinearLayout dnline;
@@ -158,7 +132,50 @@ public class MainActivity extends AppCompatActivity {
             //st.run();
         }
     }
+
+    //main 함수 부분 시작!
+    private void main() {
+        FrameLayout myButton_picture = (FrameLayout) findViewById(R.id.gildong_jpg);
+        TextView myView = (TextView) findViewById(R.id.info_context);
+        Intent intent = getIntent();
+
+        //클릭시 역 설정
+        //station st = new station("길동");
+        station st = new station(intent.getStringExtra("stationName"));
+        //그 역 출력
+        myView.setText(st.getStation_name());
+
+        //스레드 시작 - api로부터 정보를 읽어옴
+        st.start();
+
+        //스레드 종료될때까지 대기 - 스레드 안에 화면 표시 코드(이하 코드들)를 추가하니 작동이 되지 않음
+        while (st.getState() != Thread.State.TERMINATED){} ;
+
+        //station 정보 출력
+        station_info_output(st);
+
+        myButton_picture.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //클릭시 역 설정
+                //station st = new station("길동");
+                station st = new station(intent.getStringExtra("stationName"));
+                //그 역 출력
+                myView.setText(st.getStation_name());
+
+                //스레드 시작 - api로부터 정보를 읽어옴
+                st.start();
+
+                //스레드 종료될때까지 대기 - 스레드 안에 화면 표시 코드(이하 코드들)를 추가하니 작동이 되지 않음
+                while (st.getState() != Thread.State.TERMINATED){} ;
+
+                //station 정보 출력
+                station_info_output(st);
+
+    }
         });
+
+
+
     }
 
 
@@ -261,6 +278,8 @@ public class MainActivity extends AppCompatActivity {
             //-------------------------------------------------
 
         }
+
+
 
         /////////////////////////////
 
