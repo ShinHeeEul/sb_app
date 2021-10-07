@@ -4,9 +4,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_subway_alarm"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_subway_alarm_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Sb_app"
         android:usesCleartextTraffic="true"> <!--모든 http에[대한 접근 허용(이거 안쓰면 https만 가능)-->

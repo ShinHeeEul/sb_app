@@ -2,45 +2,28 @@ package com.example.sb_app;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.PointF;
+import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.media.MicrophoneInfo;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.ortiz.touchview.TouchImageView;
+import com.ortiz.touchview.*;
 
 import org.w3c.dom.Document;
 
 
-import javax.xml.parsers.*;
-
-
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
 //-------------------------------------------------
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -59,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ImageButton search_btn = (ImageButton)findViewById(R.id.searching_btn);
+        FrameLayout myButton_picture = (FrameLayout) findViewById(R.id.gildong_jpg);
 
         search_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,8 +56,32 @@ public class MainActivity extends AppCompatActivity {
 
         // xml에 정의한 이미지뷰 찾고
         TouchImageView mImageView = (TouchImageView) findViewById(R.id.subway);
+        mImageView.setOnTouchCoordinatesListener(new OnTouchCoordinatesListener() {
+            @Override
+            public void onTouchCoordinate(View view, MotionEvent motionEvent, PointF pointF) {
+                final float[] coords = new float[] { pointF.x, pointF.y};
+                Matrix matrix = new Matrix();
+                matrix.mapPoints(coords);
+                Log.d("yesss","button x : " + myButton_picture.getX() +
+                        "\nbutton Pivot X : " + myButton_picture.getPivotX() +
+                        "\nbutton Rotation X : " + myButton_picture.getRotationX() +
+                        "\nbutton Scale X : " + myButton_picture.getScaleX() +
+                        "\npoint X : " + pointF.x
+                );
+
+                // myButton_picture.setX(pointF.x);
+               // myButton_picture.setY(pointF.y);
 
 
+            }
+        });
+        mImageView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                Log.d("yesss", "view absolute x : " + motionEvent.getX());
+                return false;
+            }
+        });
 
     }
 
