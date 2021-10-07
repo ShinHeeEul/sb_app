@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class activity_searching extends AppCompatActivity {
@@ -138,13 +139,17 @@ public class activity_searching extends AppCompatActivity {
             }
         }
 
-        //역정보 split해서 HashMap에 추가
+        //역정보 split해서 list에 추가
         String[] stn = data.split("\n");
         for (int i = 0; i < stn.length - 1; i++) {
             String[] tmp = stn[i].split("\t");
+
             list.add(tmp[2]);
         }
 
+        //중복 제거를 위해 HashSet에 넣었다빼기
+        HashSet<String> tmp = new HashSet<String>(list);
+        list = new ArrayList<String>(tmp);
 
     }
 }

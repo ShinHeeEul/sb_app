@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
 
         // xml에 정의한 이미지뷰 찾고
         TouchImageView mImageView = (TouchImageView) findViewById(R.id.subway);
-        Log.d("hello","hello");
 
 
 
