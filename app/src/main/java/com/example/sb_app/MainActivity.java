@@ -1,12 +1,21 @@
 package com.example.sb_app;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
+import android.animation.FloatArrayEvaluator;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MicrophoneInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -17,6 +26,9 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ortiz.touchview.*;
@@ -56,32 +68,63 @@ public class MainActivity extends AppCompatActivity {
 
         // xml에 정의한 이미지뷰 찾고
         TouchImageView mImageView = (TouchImageView) findViewById(R.id.subway);
+        TextView myView = (TextView) findViewById(R.id.info_context);
+
+        //setOntouchCoordinatesListener - 확대,축소, 클릭 등 이벤트가 발생할 때마다 실행되는 함수
         mImageView.setOnTouchCoordinatesListener(new OnTouchCoordinatesListener() {
+
+            //view  - 현재 이미지뷰, motionEvent - 현재 발생한 이벤트(bitmap 좌표값), pointF - 현재 발생한 이벤트의 좌표값(drawable 좌표값)
+            //현재 이미지의 좌표를 drawable 좌표로 변경하는 방법
+            //mImageView.getDrawable().getIntrinsicWidth();
             @Override
             public void onTouchCoordinate(View view, MotionEvent motionEvent, PointF pointF) {
-                final float[] coords = new float[] { pointF.x, pointF.y};
-                Matrix matrix = new Matrix();
-                matrix.mapPoints(coords);
+
+                //측정한 drawalbe 좌표값들로 사각형을 만듦
+                RectF rectf = new RectF(3700.000F, 4303.3945F, 4000.223F, 4500.071F);
+                //그 사각형에 현재 좌표가 포함되는지 확인
+                if(rectf.contains(pointF.x,pointF.y)) {
+                    //표함된다면 역 생성하여 출력
+                    station st = new station("사당");
+
+                    //그 역 출력
+                    myView.setText(st.getStation_name());
+
+                    //스레드 시작 - api로부터 정보를 읽어옴
+                    st.start();
+
+                    //스레드 종료될때까지 대기 - 스레드 안에 화면 표시 코드(이하 코드들)를 추가하니 작동이 되지 않음
+                    while (st.getState() != Thread.State.TERMINATED){} ;
+
+                    //station 정보 출력
+                    station_info_output(st);
+                }
+                //아닐 경우 창 비워줌
+                else {
+
+                    LinearLayout upline;
+                    LinearLayout dnline;
+                    upline = findViewById(R.id.upLine);
+                    dnline = findViewById(R.id.dnLine);
+
+                    //정보를 보여주기 전에 화면 정리
+                    upline.removeAllViews();
+                    dnline.removeAllViews();
+                    myView.setText("");
+
+                }
+
+
                 Log.d("yesss","button x : " + myButton_picture.getX() +
                         "\nbutton Pivot X : " + myButton_picture.getPivotX() +
                         "\nbutton Rotation X : " + myButton_picture.getRotationX() +
                         "\nbutton Scale X : " + myButton_picture.getScaleX() +
-                        "\npoint X : " + pointF.x
+                        "\npoint X : " + pointF.x +
+                        "\npoint Y : " + pointF.y
+
                 );
-
-                // myButton_picture.setX(pointF.x);
-               // myButton_picture.setY(pointF.y);
-
-
             }
         });
-        mImageView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                Log.d("yesss", "view absolute x : " + motionEvent.getX());
-                return false;
-            }
-        });
+
 
     }
 
