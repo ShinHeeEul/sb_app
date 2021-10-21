@@ -53,22 +53,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ImageButton search_btn = (ImageButton)findViewById(R.id.searching_btn);
-        FrameLayout myButton_picture = (FrameLayout) findViewById(R.id.gildong_jpg);
+        init();
+    }
 
-        search_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), activity_searching.class);
-                startActivity(intent);
-            }
-        });
+//-------------------------------------------------
 
-        main();
+    //역 클릭시 이벤트 발생시키는 함수
+    private void Click_station() {
 
-        // xml에 정의한 이미지뷰 찾고
+        //이미지뷰 찾기
         TouchImageView mImageView = (TouchImageView) findViewById(R.id.subway);
-        TextView myView = (TextView) findViewById(R.id.info_context);
 
         //setOntouchCoordinatesListener - 확대,축소, 클릭 등 이벤트가 발생할 때마다 실행되는 함수
         mImageView.setOnTouchCoordinatesListener(new OnTouchCoordinatesListener() {
@@ -82,76 +76,72 @@ public class MainActivity extends AppCompatActivity {
                 //측정한 drawalbe 좌표값들로 사각형을 만듦
                 RectF rectf = new RectF(3700.000F, 4303.3945F, 4000.223F, 4500.071F);
                 //그 사각형에 현재 좌표가 포함되는지 확인
-                if(rectf.contains(pointF.x,pointF.y)) {
-                    //표함된다면 역 생성하여 출력
-                    station st = new station("사당");
+                if (rectf.contains(pointF.x, pointF.y)) {
+                    create_station("사당");
 
-                    //그 역 출력
-                    myView.setText(st.getStation_name());
-
-                    //스레드 시작 - api로부터 정보를 읽어옴
-                    st.start();
-
-                    //스레드 종료될때까지 대기 - 스레드 안에 화면 표시 코드(이하 코드들)를 추가하니 작동이 되지 않음
-                    while (st.getState() != Thread.State.TERMINATED){} ;
-
-                    //station 정보 출력
-                    station_info_output(st);
                 }
                 //아닐 경우 창 비워줌
                 else {
-
-                    LinearLayout upline;
-                    LinearLayout dnline;
-                    upline = findViewById(R.id.upLine);
-                    dnline = findViewById(R.id.dnLine);
-
-                    //정보를 보여주기 전에 화면 정리
-                    upline.removeAllViews();
-                    dnline.removeAllViews();
-                    myView.setText("");
-
+                    clear();
                 }
 
 
-                Log.d("yesss","button x : " + myButton_picture.getX() +
-                        "\nbutton Pivot X : " + myButton_picture.getPivotX() +
-                        "\nbutton Rotation X : " + myButton_picture.getRotationX() +
-                        "\nbutton Scale X : " + myButton_picture.getScaleX() +
-                        "\npoint X : " + pointF.x +
-                        "\npoint Y : " + pointF.y
-
-                );
+                Log.d("yesss", "\npoint X : " + pointF.x +
+                        "\npoint Y : " + pointF.y);
             }
         });
-
-
     }
 
-    //----------------------------------------------------- 파싱할때 필요
-    private static String getTagValue(String tag, Element eElement) {
-        NodeList nlList = eElement.getElementsByTagName(tag).item(0).getChildNodes();
-        Node nValue = (Node) nlList.item(0);
-        if (nValue == null)
-            return null;
-        return nValue.getNodeValue();
-    }
-    //-----------------------------------------------------
+//-------------------------------------------------
 
+    //station 객체 생성하여 화면에 표출하는 함수
+    //parameter : 역이름
+    private void create_station(String st_name) {
+
+
+
+        station st;
+
+        //표함된다면 역 생성하여 출력
+        if (st_name != null) {
+            st = new station(st_name);
+        } else {
+            st = new station();
+        }
+
+
+        //스레드 시작 - api로부터 정보를 읽어옴
+        st.start();
+
+        //스레드 종료될때까지 대기 - 스레드 안에 화면 표시 코드(이하 코드들)를 추가하니 작동이 되지 않음
+        while (st.getState() != Thread.State.TERMINATED) {
+        }
+
+        //화면 정리
+        clear();
+        //station 정보 출력
+        station_info_output(st);
+    }
+
+
+//-------------------------------------------------
+
+    //객체를 받아서 출력해주는 함수
+    //parameter : station 객체
     private void station_info_output(station st) {
         LinearLayout upline;
         LinearLayout dnline;
-
+        TextView myView = (TextView) findViewById(R.id.info_context);
 
         upline = findViewById(R.id.upLine);
         dnline = findViewById(R.id.dnLine);
 
-        //정보를 보여주기 전에 화면 정리
-        upline.removeAllViews();
-        dnline.removeAllViews();
-
         try {
+            //그 역 출력
+            myView.setText(st.getStation_name());
+
             //도착 시간 배열의 갯수 만큼 화면에 출력해주기
+
             for (int i = 0; i < st.getArrive_time().length; i++) {
                 //TextView를 만들어 LinearLayout의 LayoutParam 속성을 추가해주고 해당 레이아웃에 추가함
                 TextView textview = new TextView(getApplicationContext());
@@ -177,58 +167,65 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
             }
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             //st.run();
         }
     }
 
+//-------------------------------------------------
+    //화면 청소해주는 함수
+    private void clear() {
+        LinearLayout upline;
+        LinearLayout dnline;
+        TextView myView = (TextView) findViewById(R.id.info_context);
+
+
+        upline = findViewById(R.id.upLine);
+        dnline = findViewById(R.id.dnLine);
+
+        //정보를 보여주기 전에 화면 정리
+        upline.removeAllViews();
+        dnline.removeAllViews();
+        myView.setText("");
+    }
+
+    //main 들어가기 전에 준비해야될 것 - 검색화면
+    private void init() {
+        ImageButton search_btn = (ImageButton) findViewById(R.id.searching_btn);
+        TextView myView = (TextView) findViewById(R.id.info_context);
+
+        search_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), activity_searching.class);
+                startActivity(intent);
+
+            }
+        });
+
+        main();
+    }
+
+
+//-------------------------------------------------
+
     //main 함수 부분 시작!
     private void main() {
-        FrameLayout myButton_picture = (FrameLayout) findViewById(R.id.gildong_jpg);
+
         TextView myView = (TextView) findViewById(R.id.info_context);
         Intent intent = getIntent();
 
         //클릭시 역 설정
-        //station st = new station("길동");
-        station st = new station(intent.getStringExtra("stationName"));
-        //그 역 출력
-        myView.setText(st.getStation_name());
+        Click_station();
 
-        //스레드 시작 - api로부터 정보를 읽어옴
-        st.start();
-
-        //스레드 종료될때까지 대기 - 스레드 안에 화면 표시 코드(이하 코드들)를 추가하니 작동이 되지 않음
-        while (st.getState() != Thread.State.TERMINATED){} ;
-
-        //station 정보 출력
-        station_info_output(st);
-
-        myButton_picture.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //클릭시 역 설정
-                //station st = new station("길동");
-                station st = new station(intent.getStringExtra("stationName"));
-                //그 역 출력
-                myView.setText(st.getStation_name());
-
-                //스레드 시작 - api로부터 정보를 읽어옴
-                st.start();
-
-                //스레드 종료될때까지 대기 - 스레드 안에 화면 표시 코드(이하 코드들)를 추가하니 작동이 되지 않음
-                while (st.getState() != Thread.State.TERMINATED){} ;
-
-                //station 정보 출력
-                station_info_output(st);
-
-    }
-        });
-
-
-
+        //검색 기능으로 역 검색
+        create_station(intent.getStringExtra("stationName"));
     }
 
+
+//-------------------------------------------------
+//-------------------------------------------------
 
     private class station extends Thread {
         //변수////////////////////////
@@ -266,6 +263,23 @@ public class MainActivity extends AppCompatActivity {
             station_name = name;
             st_url = st_url + name;
         }
+
+
+        /////////////////////////////
+
+        //함수////////////////////////
+
+        //----------------------------------------------------- 파싱할때 필요
+        private String getTagValue(String tag, Element eElement) {
+            NodeList nlList = eElement.getElementsByTagName(tag).item(0).getChildNodes();
+            Node nValue = (Node) nlList.item(0);
+            if (nValue == null)
+                return null;
+            return nValue.getNodeValue();
+        }
+        //-----------------------------------------------------
+
+        //쓰레드 시작 부분으로 parsing하는 역할
 
         public void run() {
 
@@ -331,11 +345,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
-        /////////////////////////////
-
-        //함수////////////////////////
-
+        //변수들 getter,setter////////////////////////////
 
         public String getSt_url() {
             return st_url;
