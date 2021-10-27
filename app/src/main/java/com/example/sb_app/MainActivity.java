@@ -1,9 +1,11 @@
 package com.example.sb_app;
 
+import static com.example.sb_app.R.color.white;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 import android.animation.FloatArrayEvaluator;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -132,9 +134,13 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout upline;
         LinearLayout dnline;
         TextView myView = (TextView) findViewById(R.id.info_context);
+        TextView upline_text = (TextView) findViewById(R.id.upline_text);
+        TextView dnline_text = (TextView) findViewById(R.id.dnline_text);
 
         upline = findViewById(R.id.upLine);
         dnline = findViewById(R.id.dnLine);
+
+
 
         try {
             //그 역 출력
@@ -148,7 +154,8 @@ public class MainActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
                 //textview에 도착예정시간을 추가해줌
-                textview.setText(st.getArrive_time()[i]);
+                String[] Nextpoint = st.getEndNextPoint().split("-");
+                textview.setText(Nextpoint[0] + " : " + st.getArrive_time()[i]);
 
                 //textview에 속성추가를 해줌
                 textview.setLayoutParams(param);
@@ -160,9 +167,14 @@ public class MainActivity extends AppCompatActivity {
                 //상행인지 하행인지 판단하여 출력해줌
                 switch (st.getUpdnLine()[i]) {
                     case "상행":
+                        //upline_text.setText(st.getEndPoint());
+                        //upline.addView(upline_text);
                         upline.addView(textview);
+
                         break;
                     case "하행":
+                        //dnline_text.setText(st.getEndPoint());
+                        //dnline.addView(dnline_text);
                         dnline.addView(textview);
                         break;
                 }
@@ -173,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//-------------------------------------------------
+    //-------------------------------------------------
     //화면 청소해주는 함수
     private void clear() {
         LinearLayout upline;
@@ -245,8 +257,10 @@ public class MainActivity extends AppCompatActivity {
         private int[] line_id;
         //상행하행 - updnLine
         private String[] updnLine = null;
-        //종착역 - trainLineNm
+        //종착역 - bstatnNm
         private String endPoint;
+        //종착역+다음역 - trainLineNm
+        private String EndNextPoint;
 
 
         ////////////////////////////
@@ -323,7 +337,10 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("yesss", "역 id : " + getTagValue("statnId", eElement));
                         Log.d("yesss", "호선 정보 : " + getTagValue("subwayList", eElement));
                         Log.d("yesss", "updnLine : " + getTagValue("updnLine", eElement));
-                        Log.d("yesss", "종착역 : " + getTagValue("trainLineNm", eElement));
+                        Log.d("yesss", "종착역 + 다음역 : " + getTagValue("trainLineNm", eElement));
+                        Log.d("yesss", "종착역 : " + getTagValue("bstatnNm", eElement));
+
+
 
 
                         //변수 대입
@@ -331,7 +348,8 @@ public class MainActivity extends AppCompatActivity {
                         setArrive_time(getTagValue("arvlMsg2", eElement), temp);
                         setStation_id(Integer.parseInt(getTagValue("statnId", eElement)));
                         setUpdnLine(getTagValue("updnLine", eElement), temp);
-                        setEndPoint(getTagValue("trainLineNm", eElement));
+                        setEndPoint(getTagValue("bstatnNm", eElement));
+                        setEndNextPoint(getTagValue("trainLineNm",eElement));
 
 
                     }    // for end
@@ -410,6 +428,14 @@ public class MainActivity extends AppCompatActivity {
 
         public void setEndPoint(String endPoint) {
             this.endPoint = endPoint;
+        }
+
+        public String getEndNextPoint() {
+            return EndNextPoint;
+        }
+
+        public void setEndNextPoint(String endNextPoint) {
+            EndNextPoint = endNextPoint;
         }
         //////////////////////////////////
     }
